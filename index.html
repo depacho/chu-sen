@@ -67,7 +67,7 @@
     </style>
 </head>
 <body>
-    <h1 style="text-align: center;">抽選<br>機能</h1>
+    <h1 style="text-align: center;">🐽ガニぶ～コラボ🐽<br>ランダムアーカイブチャレンジ</h1>
 
     <button id="drawButton" onclick="draw()">抽選する</button>
 
@@ -105,7 +105,7 @@
 
             // 重複を許可しない場合
             if (drawnItems.length >= items.length) {
-                resultDiv.innerHTML = 'おつかれさまでした';
+                resultDiv.innerHTML = 'おつかれさまでした！';
                 remainingChoicesDiv.innerHTML = ''; // 残り選択肢は空にする
                 return;
             }
@@ -123,7 +123,7 @@
 
             // 残りの選択肢の表示
             const remainingCount = items.length - drawnItems.length;
-            resultDiv.innerHTML = `選ばれた項目: <span class="selected">${result}</span>`;
+            resultDiv.innerHTML = `次のチャレンジ <span class="selected">${result}</span>`;
             remainingChoicesDiv.innerHTML = `残り:${remainingCount}個`;
         }
     </script>
