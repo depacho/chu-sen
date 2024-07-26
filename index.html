@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>抽選機能</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+display: flex;
+flex-direction: column;
+align-items: center; /* 横方向に中央揃え */
+margin: 0;
+padding-top: 20px; /* 上部に少しスペースを追加 */
+}
+#result {
+margin-top: 20px;
+font-size: 20px;
+font-weight: bold;
+text-align: center; /* 中央にテキストを表示 */
+}
+#remainingChoices {
+margin-top: 10px; /* 残りの選択肢の表示部分のマージン */
+font-size: 10px; /* 残りの選択肢のフォントサイズ */
+}
+.selected {
+font-size: 35px; /* 大きさを変更 */
+color: red; /* 色を赤に変更 */
+}
+#inputArea {
+display: none; /* 初期状態では非表示 */
+margin: 20px 0;
+}
+textarea {
+width: 300px;
+height: 150px;
+}
+button {
+margin-top: 10px;
+padding: 10px 20px;
+font-size: 16px;
+}
+.toggle-btn {
+background-color: gray; /* ボタンの背景色を灰色に */
+color: white; /* テキストの色を白に */
+border: none; /* 枠線をなしに */
+cursor: pointer; /* ポインタに変更 */
+padding: 5px 10px; /* 小さめのボタンサイズ */
+font-size: 14px; /* フォントサイズを小さく */
+}
+.toggle-btn:hover {
+background-color: #A9A9A9; /* ホバー時の色 */
+}
+#drawButton {
+background-color: yellow; /* 抽選ボタンの背景色を黄色に */
+border: none; /* 枠線をなしに */
+}
+#drawButton:hover {
+background-color: #ffd700; /* ホバー時の色 */
+}
+</style>
+</head>
+<body>
+<h1 style="text-align: center;">🐽ガニぶ〜コラボ🐽<br>オリジナルアーカイブ</h1>
+<button id="drawButton" onclick="draw()">抽選する</button>
+<div id="result"></div>
+<div id="remainingChoices"></div>
+<button class="toggle-btn" onclick="toggleInputArea()">選択肢はここを押して表示</button>
+<div id="inputArea">
+<textarea id="inputText" placeholder="選択項目を改行で入力してください"></textarea>
+</div>
+<script>
+let items = [];
+let drawnItems = [];
+function toggleInputArea() {
+const inputArea = document.getElementById('inputArea');
+inputArea.style.display = inputArea.style.display === 'none' ? 'block' : 'none';
+}
+function draw() {
+const inputText = document.getElementById('inputText').value;
+items = inputText.split('\n').map(item => item.trim()).filter(item => item !== '');
+const resultDiv = document.getElementById('result');
+const remainingChoicesDiv = document.getElementById('remainingChoices');
+// 選択肢がない場合
+if (items.length === 0) {
+resultDiv.innerHTML = '選択項目がありません。';
+remainingChoicesDiv.innerHTML = ''; // 残り選択肢は空にする
+return;
+}
+// 重複を許可しない場合
+if (drawnItems.length >= items.length) {
+resultDiv.innerHTML = 'おつかれさまでした！！';
+remainingChoicesDiv.innerHTML = ''; // 残り選択肢は空にする
+return;
+}
+let randomIndex;
+let result;
+// 重複しない項目からランダムに選ぶ
+do {
+randomIndex = Math.floor(Math.random() * items.length);
+result = items[randomIndex];
+} while (drawnItems.includes(result));
+drawnItems.push(result);
+// 残りの選択肢の表示
+const remainingCount = items.length - drawnItems.length;
+resultDiv.innerHTML = `次のチャレンジ: <br><span class="selected">${result}</span>`;
+remainingChoicesDiv.innerHTML = `残り:${remainingCount}個`;
+}
+</script>
+</body>
+</html>
