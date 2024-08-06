@@ -43,7 +43,6 @@
         <div id="result" class="result"></div>
         <div id="remaining" class="remaining"></div>
     </div>
-
     <script>
         let items = [];
 
@@ -55,18 +54,15 @@
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = data;
 
-                // 改行で分割し、<br>タグで接続
-                items = Array.from(tempDiv.childNodes)
-                    .flatMap(node => {
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            // <br>で分割し、それぞれの内容を取得
-                            return node.innerHTML.split(/<br\s*\/?>/).map(item => item.trim()).filter(item => item);
-                        } else if (node.nodeType === Node.TEXT_NODE) {
-                            // テキストノードも分割
-                            return node.textContent.split(/[\r\n]+/).map(item => item.trim()).filter(item => item);
-                        }
-                        return [];
-                    });
+                // ★で囲まれた部分を抽出し、<br>で分割
+                const content = tempDiv.innerHTML;
+                const regex = /★(.*?)★/g; // ★で囲まれた部分を正規表現で取得
+                let matches;
+
+                while ((matches = regex.exec(content)) !== null) {
+                    // matches[1]は★で囲まれた内容
+                    items.push(matches[1].replace(/<br\s*\/?>/g, '<br>')); // <br>をそのまま保持
+                }
 
                 updateRemainingItems();
             })
@@ -75,12 +71,12 @@
         // 抽選ボタンが押されたときの処理
         document.getElementById('drawButton').addEventListener('click', () => {
             if (items.length === 0) {
-                document.getElementById('result').innerText = '抽選できる項目がありません。';
+                document.getElementById('result').innerText = 'おつかれさまでした！';
                 return;
             }
             const randomIndex = Math.floor(Math.random() * items.length);
             const drawnItem = items[randomIndex];
-            document.getElementById('result').innerText = drawnItem;
+            document.getElementById('result').innerHTML = drawnItem.replace(/<br>/g, '<br>'); // <br>も保持
 
             // 抽選結果を表示した項目を削除
             items.splice(randomIndex, 1);
