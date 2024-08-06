@@ -55,25 +55,22 @@
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = data;
 
-                // 改行で分割し、<br>タグを考慮して一つの項目に連結
+                // 改行で分割し、<br>タグで接続
                 items = Array.from(tempDiv.childNodes)
                     .flatMap(node => {
-                        if (node.nodeType === Node.TEXT_NODE) {
-                            return node.textContent
-                                .trim()
-                                .split(/\n/)
-                                .filter(item => item); // 空の項目はフィルタリング
-                        } else if (node.nodeType === Node.ELEMENT_NODE) {
-                            return node.innerHTML
-                                .split(/<br\s*\/?>/)
-                                .map(item => item.trim())
-                                .filter(item => item); // 空の項目はフィルタリング
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            // <br>で分割し、それぞれの内容を取得
+                            return node.innerHTML.split(/<br\s*\/?>/).map(item => item.trim()).filter(item => item);
+                        } else if (node.nodeType === Node.TEXT_NODE) {
+                            // テキストノードも分割
+                            return node.textContent.split(/[\r\n]+/).map(item => item.trim()).filter(item => item);
                         }
                         return [];
                     });
 
                 updateRemainingItems();
-            });
+            })
+            .catch(error => console.error('Error fetching data:', error));
 
         // 抽選ボタンが押されたときの処理
         document.getElementById('drawButton').addEventListener('click', () => {
