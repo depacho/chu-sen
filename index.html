@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ガニぶ～コラボ抽選機能</title>
+    <title>抽選機能</title>
     <style>
         body {
-              background-image: url('https://github.com/depacho/chu-sen/blob/main/haikei.jpg?raw=true'); /* 背景画像を指定 */
+            background-image: url('https://github.com/depacho/chu-sen/blob/main/haikei.jpg?raw=true'); /* 背景画像を設定 */
             background-size: cover;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            justify-content: center; /* 横は中央 */
+            align-items: flex-start; /* 縦は上部 */
             height: 100vh;
+            margin: 0; /* ブラウザのデフォルトのマージンを削除 */
             color: black;
-            padding: 20px;
+            padding: 20px; /* 上部にパディングを追加 */
         }
         .container {
             width: 50%;
@@ -43,6 +44,7 @@
         <div id="result" class="result"></div>
         <div id="remaining" class="remaining"></div>
     </div>
+
     <script>
         let items = [];
 
@@ -71,7 +73,7 @@
         // 抽選ボタンが押されたときの処理
         document.getElementById('drawButton').addEventListener('click', () => {
             if (items.length === 0) {
-                document.getElementById('result').innerText = 'おつかれさまでした！';
+                document.getElementById('result').innerText = '抽選できる項目がありません。';
                 return;
             }
             const randomIndex = Math.floor(Math.random() * items.length);
