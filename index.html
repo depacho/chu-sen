@@ -3,128 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>抽選機能</title>
+    <title>ガニぶ～コラボ抽選機能</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+              background-image: url('https://github.com/depacho/chu-sen/blob/main/haikei.jpg?raw=true'); /* 背景画像を指定 */
+            background-size: cover;
             display: flex;
-            flex-direction: column;
-            align-items: center; /* 横方向に中央揃え */
-            margin: 0;
-            padding-top: 20px; /* 上部に少しスペースを追加 */
-            background-image: url('https://github.com/depacho/chu-sen/blob/main/haikei.jpg?raw=true'); /* 背景画像を指定 */
-            background-size: cover; /* 画像を全体にカバー */
-            background-position: center; /* 背景画像の位置を中央に設定 */
-            color: black; /* 文字の色を黒に設定 */
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: black;
         }
-        #result {
-            margin-top: 20px;
-            font-size: 20px;
-            font-weight: bold;
-            text-align: center; /* 中央にテキストを表示 */
-            width: 30%; /* 幅を画面の50%に設定 */
-            word-wrap: break-word; /* 長文を折り返す */
+        .container {
+            width: 50%;
+            text-align: center;
         }
-        #remainingChoices {
-            margin-top: 10px; /* 残りの選択肢の表示部分のマージン */
-            font-size: 16px; /* 残りの選択肢のフォントサイズ */
-        }
-        .selected {
-            font-size: 24px; /* 大きさを変更 */
-            color: red; /* 色を赤に変更 */
-        }
-        #inputArea {
-            display: none; /* 初期状態では非表示 */
+        .btn-draw {
+            background-color: yellow;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
             margin: 20px 0;
         }
-        textarea {
-            width: 300px;
-            height: 150px;
+        .result {
+            color: red;
+            font-size: 24px;
         }
-        button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-        }
-        .toggle-btn {
-            background-color: gray; /* ボタンの背景色を灰色に */
-            color: white; /* テキストの色を白に */
-            border: none; /* 枠線をなしに */
-            cursor: pointer; /* ポインタに変更 */
-            padding: 5px 10px; /* 小さめのボタンサイズ */
-            font-size: 14px; /* フォントサイズを小さく */
-        }
-        .toggle-btn:hover {
-            background-color: A9A9A9_1￼; /* ホバー時の色 */
-        }
-        #drawButton {
-            background-color: yellow; /* 抽選ボタンの背景色を黄色に */
-            border: none; /* 枠線をなしに */
-        }
-        #drawButton:hover {
-            background-color: FFD700_1￼; /* ホバー時の色 */
+        .remaining {
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <h1 style="text-align: center;">🐽ガニぶ～コラボ🐽<br>ランダムアーカイブチャレンジ</h1>
-
-    <button id="drawButton" onclick="draw()">抽選する</button>
-
-    <div id="result"></div>
-    <div id="remainingChoices"></div>
-
-    <button class="toggle-btn" onclick="toggleInputArea()">選択肢を表示/非表示</button>
-
-    <div id="inputArea">
-        <textarea id="inputText" placeholder="選択項目を改行で入力してください"></textarea>
+    <div class="container">
+        <h1>🐽ガニぶ～コラボ🐽<br>ランダムアーカイブチャレンジ</h1>
+        <button class="btn-draw" id="drawButton">抽選する</button>
+        <div id="result" class="result"></div>
+        <div id="remaining" class="remaining"></div>
     </div>
 
     <script>
         let items = [];
-        let drawnItems = [];
 
-        function toggleInputArea() {
-            const inputArea = document.getElementById('inputArea');
-            inputArea.style.display = inputArea.style.display === 'none' ? 'block' : 'none';
-        }
+        // data.htmlからデータを取得
+        fetch('data.html')
+            .then(response => response.text())
+            .then(data => {
+                // 改行で分割し、<br>タグを考慮して一つの項目に連結
+                items = data.split(/\n/).map(line => line.replace(/<br\s*\/?>/g, ' '));
+                updateRemainingItems();
+            });
 
-        function draw() {
-            const inputText = document.getElementById('inputText').value;
-            items = inputText.split('\n').map(item => item.trim()).filter(item => item !== '');
-
-            const resultDiv = document.getElementById('result');
-            const remainingChoicesDiv = document.getElementById('remainingChoices');
-
-            // 選択肢がない場合
+        // 抽選ボタンが押されたときの処理
+        document.getElementById('drawButton').addEventListener('click', () => {
             if (items.length === 0) {
-                resultDiv.innerHTML = '選択項目がありません。';
-                remainingChoicesDiv.innerHTML = ''; // 残り選択肢は空にする
+                document.getElementById('result').innerText = 'おつかれさまでした！';
                 return;
             }
+            const randomIndex = Math.floor(Math.random() * items.length);
+            const drawnItem = items[randomIndex];
+            document.getElementById('result').innerText = drawnItem;
 
-            // 重複を許可しない場合
-            if (drawnItems.length >= items.length) {
-                resultDiv.innerHTML = 'おつかれさまでした！';
-                remainingChoicesDiv.innerHTML = ''; // 残り選択肢は空にする
-                return;
-            }
+            // 抽選結果を表示した項目を削除
+            items.splice(randomIndex, 1);
+            updateRemainingItems();
+        });
 
-            let randomIndex;
-            let result;
-
-            // 重複しない項目からランダムに選ぶ
-            do {
-                randomIndex = Math.floor(Math.random() * items.length);
-                result = items[randomIndex];
-            } while (drawnItems.includes(result));
-
-            drawnItems.push(result);
-
-            // 残りの選択肢の表示
-            const remainingCount = items.length - drawnItems.length;
-            resultDiv.innerHTML = `次のチャレンジ: <br><span class="selected">${result}</span>`;
-            remainingChoicesDiv.innerHTML = `残り:${remainingCount}個`;
+        // 残りの項目数を更新
+        function updateRemainingItems() {
+            document.getElementById('remaining').innerText = `残り: ${items.length}`;
         }
     </script>
 </body>
