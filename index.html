@@ -75,7 +75,7 @@
         // 抽選ボタンが押されたときの処理
         document.getElementById('drawButton').addEventListener('click', () => {
             if (items.length === 0) {
-                document.getElementById('result').innerText = '抽選できる項目がありません。';
+                document.getElementById('result').innerText = 'おつかれさまでした！';
                 return;
             }
             const randomIndex = Math.floor(Math.random() * items.length);
